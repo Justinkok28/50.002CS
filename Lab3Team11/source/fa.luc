@@ -1,0 +1,13 @@
+// A full adder combinational logic unit 
+module fa (
+    input a,          // Single bit from A
+    input b,          // Single bit from B
+    input cin,   // Carry input from the previous less significant bit
+    output s,       // Sum output for this bit
+    output cout  // Carry output to the next more significant bit
+) {
+    always {
+        s = a ^ b ^ cin //XOR a,b,carry_in
+        cout = (a & b) | (cin & a) |(cin & b)
+    }
+}

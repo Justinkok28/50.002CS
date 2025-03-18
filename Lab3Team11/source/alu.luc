@@ -1,0 +1,77 @@
+module alu (
+    input a[32],
+    input b[32],
+    input alufn[6],
+    output out[32],
+    output z[4],
+    output v[4],
+    output n[4]
+) {
+    const SIZE = 32
+    sig muxout[32]
+    adder adder(#SIZE(SIZE))
+    compare compare
+    boolean boolean
+    compact_shifter shifter
+    multiplier multiplier
+    divider divider
+    mux_4 mux_4[32]
+    mux_4 mux_2[32]
+    
+    
+    always {
+        //adder
+    adder.a = a;
+    adder.b = b;
+    adder.alufn_signal = alufn;
+
+    z = adder.z;
+    v = adder.v;
+    n = adder.n;
+        //compare
+    compare.z = adder.z
+    compare.v = adder.v
+    compare.n = adder.n
+    compare.alufn = alufn
+        
+        //boolean
+    boolean.a = a
+    boolean.b = b
+    boolean.alufn = alufn
+        
+        //shifter
+    shifter.a = a
+    shifter.b = b[4:0]
+    shifter.alufn = alufn
+        
+        //multiplier
+    multiplier.a = a
+    multiplier.b = b
+        
+        //divider
+        divider.a = a
+        divider.b = b
+        
+   repeat(i, 32, 0, 1) {
+            mux_2.in[i][0] = adder.out[i] 
+            mux_2.in[i][1] = adder.out[i] 
+            mux_2.in[i][2] = multiplier.mul[i] 
+            mux_2.in[i][3] = divider.div[i]
+            mux_2.s0[i] = alufn[0]
+            mux_2.s1[i] = alufn[1]
+            muxout[i] = mux_2.out[i]      
+        }
+        
+   repeat(i, 32, 0, 1) {
+            mux_4.in[i][0] = muxout[i] 
+            mux_4.in[i][1] = boolean.bool[i] 
+            mux_4.in[i][2] = shifter.shift[i]
+            mux_4.in[i][3] = compare.cmp[i]
+            mux_4.s0[i] = alufn[4]
+            mux_4.s1[i] = alufn[5]
+            out[i] = mux_4.out[i]   
+        }
+        
+        
+    }
+}

@@ -1,0 +1,45 @@
+module compact_shifter (
+    input a[32],
+    input b[5],
+    input alufn[6],
+    output shift[32]
+) {
+    
+    shifter shl
+    bit_reverse rev[2]
+    mux_2 mux1[32] //got lazy to do multiple mux so each got its own name so not confusing
+    mux_2 mux2[32]
+    mux_2 padding
+    
+    
+    always {
+        rev.in[0] = a
+        
+         repeat(i, 32, 0, 1) {
+            mux1.in[i][0] = a[i] // when not using shifter
+            mux1.in[i][1] = rev.reversed[0][i] // when using shifter
+
+            mux1.s0[i] = alufn[0] // choose which shifter to use
+            shl.a[i] = mux1.out[i] // assign output value
+            
+        }
+        
+        padding.in[0] = b0 //normal shifting
+        padding.in[1] = a[31] //with sign extension
+        padding.s0 = alufn[1] //choose
+        
+        shl.pad = padding.out
+        shl.b = b
+        rev.in[1] = shl.shift
+        
+    repeat(i, 32, 0, 1) {
+            mux2.in[i][0] = shl.shift[i] // when not using shifter
+            mux2.in[i][1] = rev.reversed[1][i] // when using shifter
+
+            mux2.s0[i] = alufn[0] // choose which shifter to use
+            shift[i] = mux2.out[i] // assign output value
+            
+        }
+        
+    }
+}

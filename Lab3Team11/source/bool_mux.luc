@@ -1,0 +1,20 @@
+module bool_mux (
+    input s0,  // selectors
+    input s1,
+    input s2,
+    input s3,
+    input in[4], // inputs 
+    output out
+) {
+    
+    always {
+        case (c{s3, s2, s1, s0}){
+            b1000: out = in[0]
+            b1110: out = in[1]
+            b0110: out = in[2]
+            b1010: out = in[3]
+            default:
+                out = 0
+        }
+    }
+}

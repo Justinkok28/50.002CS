@@ -1,0 +1,80 @@
+module autoROM (
+    input s0,  // selectors
+    input s1,
+    input s2,
+    input s3,
+    output out[32],
+    output a[32],
+    output b[32],
+    output alufn[6]
+) {
+    
+    
+    always {
+        case (c{s3, s2, s1, s0}){
+            b0000: out = 32h80000000 //sum
+                a = 32h40000000
+                b = 32h40000000
+                alufn = 6b000000
+            b0001: out = 32h80000000 //sub
+                a = 32h00000000
+                b = 32h80000000
+                alufn = 6b000001
+            b0010: out = 32hFFFFFFFA //mul
+                a = 32hFFFFFFFE
+                b = 32h00000003
+                alufn = 6b000010
+            b0011: out = 32h000FF000 //AND
+                a = 32hFFFFFFFF
+                b = 32h000FF000
+                alufn = 6b011000
+            b0100: out = 32hFFFFFFFF //OR
+                a = 32hFFFFFFFF
+                b = 32h00000000
+                alufn = 6b011110
+            b0101: out = 32hFFF00FFF //XOR
+                a = 32hFFFFFFFF
+                b = 32h000FF000
+                alufn = 6b010110
+            b0110: out = 32hF0F0F0F0 //pass thru
+                a = 32hF0F0F0F0
+                b = 32hFFFFFFFF
+                alufn = 6b011010
+            b0111: out = 32h00001000 //SHL
+                a = 32h00000100
+                b = 32h00000004
+                alufn = 6b100000
+            b1000: out = 32h00000100 //SHR
+                a = 32h00001000
+                b = 32h00000004
+                alufn = 6b100001
+            b1001: out = 32hF8000000 //SRA
+                a = 32h80000000
+                b = 32h00000004
+                alufn = 6b100011
+            b1010: out = 32h00000001 //CMPEQ
+                a = 32h00100000
+                b = 32h00100000
+                alufn = 6b110011
+            b1011: out = 32h00000000 //CMPLT
+                a = 32h00100000
+                b = 32h00100000
+                alufn = 6b110101
+            b1100: out = 32h00000001 //CMPLE
+                a = 32h00100000
+                b = 32h00100000
+                alufn = 6b110111
+            b1101: out = 32h00040000 //DIV
+                a = 32h00100000
+                b = 32h00000004
+                alufn = 6b000011
+            
+            
+            default:
+                out = 0
+                a =0
+                b=0
+                alufn=0
+        }
+    }
+}

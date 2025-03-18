@@ -1,0 +1,37 @@
+module x_bit_left_shifter #(
+  // parameter declaration, to be set during module instantiation
+  // default value given is 8
+  SHIFT = 8 : SHIFT > -1 & SHIFT < 32
+  )(
+    input a[32],
+    input shift,
+    input pad,
+    output out[32]
+  ) {
+  // module declarations
+  // instantiate mux_2 (32 of them)
+    mux_2 mux_2_32[32]
+    sig shifted_bits[32]
+    
+  
+  // module declarations
+  // instantiate mux_2 (32 of them)
+  // other useful intermediary signals, e.g: shifted_bits[32] 
+  
+  always {
+        
+        shifted_bits = c{a[(31-SHIFT):0], SHIFTx{pad}} //shifted bits depending on SHIFT value
+
+       repeat(i, 32, 0, 1) {
+            mux_2_32.in[i][0] = a[i] // when not using shifter
+            mux_2_32.in[i][1] = shifted_bits[i] // when using shifter
+
+            mux_2_32.s0[i] = shift // choose which shifter to use
+            out[i] = mux_2_32.out[i] // assign output value
+            
+        }
+            
+         
+            
+  }
+    }

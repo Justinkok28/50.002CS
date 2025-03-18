@@ -1,0 +1,21 @@
+module compare (
+    input z,
+    input v,
+    input n,
+    input alufn[6],
+    output cmp[32]
+) {
+    sig mux_in[4]
+    
+    mux_4 cmp_mux
+    always {
+        mux_in[0] = 0         //unused
+        mux_in[1] = z       
+        mux_in[2] = n^v  
+        mux_in[3] = (n^v)|z; 
+        cmp_mux.s0 = alufn[1];  // S0 from ALUFN[1]
+        cmp_mux.s1 = alufn[2];  // S1 from ALUFN[2]
+        cmp_mux.in = mux_in;    
+        cmp = c{31b0,cmp_mux.out};  // Output from multiplexer
+    }
+}

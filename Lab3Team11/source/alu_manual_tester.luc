@@ -1,0 +1,134 @@
+module alu_manual_tester#(
+    CLK_FREQ ~ 1000 : CLK_FREQ > 0) 
+(
+    input clk,  // clock
+    input rst,  // reset
+    input io_button[5],
+    input io_dip[3][8],
+    output io_led[3][8],
+    output io_segment[8],
+    output io_select[4],
+    output led[8]          // 8 user controllable LEDs
+) {
+    alu alu
+    const SEVEN_SEG_DIV = $is_sim() ? 3 : 16
+
+    
+     enum States {
+        FIRST16A,
+        LAST16A,
+        FIRST16B,
+        LAST16B,
+        IDLE
+    }
+    
+    
+    .clk(clk) {
+        // instantiate 5 edge detectors, one for each button 
+      edge_detector io_button_edge[5](#RISE(5x{{1}}), #FALL(5x{{0}}))
+      // instantiate 5 conditioners, one for each button
+      button_conditioner io_button_cond[5](#CLK_FREQ(5x{{1000}})) 
+        .rst(rst){
+            dff states[$width(States)](#INIT(States.IDLE))
+            dff current_a[32](#INIT(0))
+            dff current_b[32](#INIT(0))
+            multi_seven_seg seg(#DIV(SEVEN_SEG_DIV))
+        }
+    }
+    
+
+    // implement alu tester logic here
+    always {
+        //display z,v,n using 7 seg
+        seg.values = c{{4b0},{alu.z},{alu.v},{alu.n}}
+        io_segment = ~seg.seg
+        io_select = ~seg.sel
+        
+        //button conditioners
+        io_button_cond.in = io_button
+        io_button_edge.in = io_button_cond.out
+        
+        //
+        states.d = states.q
+        current_a.d = current_a.q
+        current_b.d = current_b.q
+        
+        alu.a = current_a.q
+        alu.b = current_b.q
+        alu.alufn = io_dip[2][5:0] //assign alufn
+        led = alu.out[7:0] //first 8 bits of output
+        io_led[2:0] = c{{alu.out[31:24]},{alu.out[23:16]},{alu.out[15:8]}} //next 24 bits of output
+        
+        
+        case(states.q){
+    States.IDLE:
+      
+      // this takes precedence, placed as the first clause
+      if (io_button_edge.out[0])
+      {
+          states.d = States.FIRST16A
+      }
+       else if(io_button_edge.out[2]){
+            states.d = States.FIRST16B
+                }
+                
+            States.FIRST16A:
+            //set value of first 16bits of a
+            current_a.d[7:0] = io_dip[0]
+            current_a.d[15:8] = io_dip[1]
+                
+            //display
+            seg.values = c{{4h0},{4h0},{4h1},{4hA}}
+            led = current_a.q[7:0] //first 8 bits of a
+            io_led[2:0] = c{{current_a.q[31:24]},{current_a.q[23:16]},{current_a.q[15:8]}} //next 24 bits of a
+                
+            if(io_button_edge.out[1]){
+            states.d = States.LAST16A
+                }
+                
+      States.LAST16A:
+            //set value of last 16bits of a
+            current_a.d[23:16] = io_dip[0]
+            current_a.d[31:24] = io_dip[1]
+                
+            //display
+            seg.values = c{{4h0},{4h0},{4h2},{4hA}}
+            led = current_a.q[7:0] //first 8 bits of a
+            io_led[2:0] = c{{current_a.q[31:24]},{current_a.q[23:16]},{current_a.q[15:8]}} //next 24 bits of a
+                
+            if(io_button_edge.out[1]){
+            states.d = States.IDLE
+                }
+            States.FIRST16B:
+            //set value of first 16bits of b
+            current_b.d[7:0] = io_dip[0]
+            current_b.d[15:8] = io_dip[1]
+                
+            //display
+            seg.values = c{{4h0},{4h0},{4h1},{4hB}}
+            led = current_b.q[7:0] //first 8 bits of b
+            io_led[2:0] = c{{current_b.q[31:24]},{current_b.q[23:16]},{current_b.q[15:8]}} //next 24 bits of b
+                
+            if(io_button_edge.out[1]){
+            states.d = States.LAST16B
+                }
+                
+      States.LAST16B:
+            //set value of last 16bits of b
+            current_b.d[23:16] = io_dip[0]
+            current_b.d[31:24] = io_dip[1]
+                
+            //display
+            seg.values = c{{4h0},{4h0},{4h2},{4hB}}
+            led = current_b.q[7:0] //first 8 bits of b
+            io_led[2:0] = c{{current_b.q[31:24]},{current_b.q[23:16]},{current_b.q[15:8]}} //next 24 bits of b
+                
+            if(io_button_edge.out[1]){
+            states.d = States.IDLE
+                }
+                
+        }
+        
+        
+    }
+}

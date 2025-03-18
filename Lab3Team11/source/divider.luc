@@ -1,0 +1,14 @@
+module divider (
+    input a[32],
+    input b[32],
+    output div[32]
+) {
+
+  
+      
+    always {
+        div = a/b
+                
+        }
+  
+    }
