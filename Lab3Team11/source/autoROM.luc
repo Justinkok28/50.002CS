@@ -68,6 +68,16 @@ module autoROM (
                 a = 32h00100000
                 b = 32h00000004
                 alufn = 6b000011
+            b1110: out = 32hFFEFFFFF //NOR
+                a = 32h00100000
+                b = 32h00100000
+                alufn = 6b011011
+            b1111: out = 32hFFEFEFFF //NAND
+                a = 32h00111000
+                b = 32h00101000
+                alufn = 6b011100
+            
+            
             
             
             default:

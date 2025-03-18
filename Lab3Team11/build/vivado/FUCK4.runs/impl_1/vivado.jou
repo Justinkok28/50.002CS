@@ -1,0 +1,14 @@
+#-----------------------------------------------------------
+# Vivado v2023.2 (64-bit)
+# SW Build 4029153 on Fri Oct 13 20:14:34 MDT 2023
+# IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
+# SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
+# Start of session at: Wed Mar 19 00:23:22 2025
+# Process ID: 11452
+# Current directory: C:/Users/chiny/Desktop/SUTD/Comp struct/fuckkkk/FUCK4/build/vivado/FUCK4.runs/impl_1
+# Command line: vivado.exe -log alchitry_top.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source alchitry_top.tcl -notrace
+# Log file: C:/Users/chiny/Desktop/SUTD/Comp struct/fuckkkk/FUCK4/build/vivado/FUCK4.runs/impl_1/alchitry_top.vdi
+# Journal file: C:/Users/chiny/Desktop/SUTD/Comp struct/fuckkkk/FUCK4/build/vivado/FUCK4.runs/impl_1\vivado.jou
+# Running On: yz-koollappy, OS: Windows, CPU Frequency: 2803 MHz, CPU Physical cores: 14, Host memory: 16873 MB
+#-----------------------------------------------------------
+source alchitry_top.tcl -notrace
